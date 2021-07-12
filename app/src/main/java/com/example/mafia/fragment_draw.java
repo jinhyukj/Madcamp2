@@ -26,13 +26,18 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
+import okhttp3.WebSocket;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link fragment_draw#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class fragment_draw extends Fragment {
-
+    //TODO: create a websocket to connect to server
+    private WebSocket webSocket;
+    private String SERVER_PATH = "ws://192.249.18.146:443";
+    
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -94,9 +99,13 @@ public class fragment_draw extends Fragment {
         canvasContainer.addView(drawCanvas);
 
         button = v.findViewById(R.id.button);
-
+        initiateSocketConnection();
         setOnClickListener();
+        
         return v;
+    }
+
+    private void initiateSocketConnection() {
     }
 
     private void findId() {

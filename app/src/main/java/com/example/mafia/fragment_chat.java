@@ -54,7 +54,7 @@ public class fragment_chat extends Fragment implements TextWatcher {
 
     private String name;
     private WebSocket webSocket;
-    private String SERVER_PATH = "ws://192.249.18.146:443";
+    private String SERVER_PATH = "ws://192.249.18.102:80";
     private EditText messageEdit;
     private View sendBtn, pickImgBtn;
     private RecyclerView recyclerView;
@@ -65,6 +65,7 @@ public class fragment_chat extends Fragment implements TextWatcher {
     private TextView word;
     private TextView leftTime;
     private TextView score;
+    private String hidden_word;
 
     public fragment_chat() {
         // Required empty public constructor
@@ -106,6 +107,7 @@ public class fragment_chat extends Fragment implements TextWatcher {
         initiateSocketConnection();
 
         word = v.findViewById(R.id.word);
+
         leftTime = v.findViewById(R.id.leftTime);
         score = v.findViewById(R.id.score);
 
@@ -192,18 +194,27 @@ public class fragment_chat extends Fragment implements TextWatcher {
             ((RoomActivity) getContext()).runOnUiThread(() -> {
                 try {
                     JSONObject jsonObject = new JSONObject(text);
-                    jsonObject.put("isSent", false);
-                    Log.d("isSent", "ok");
+                    if (jsonObject.has("quiz")) {
+                        word.setText(jsonObject.getString("word"));
+                    }
 
-                    messageAdapter.addItem(jsonObject);
+                    else if (jsonObject.has("hidden")) {
+                        hidden_word = jsonObject.getString("word");
+                    }
 
-                    recyclerView.smoothScrollToPosition(messageAdapter.getItemCount() - 1);
+                    else {
+                        jsonObject.put("isSent", false);
+                        Log.d("isSent", "ok");
+
+                        messageAdapter.addItem(jsonObject);
+
+                        recyclerView.smoothScrollToPosition(messageAdapter.getItemCount() - 1);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             });
         }
-
     }
 
     private void initializeView() {
