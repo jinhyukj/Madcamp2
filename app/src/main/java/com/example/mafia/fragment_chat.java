@@ -65,7 +65,7 @@ public class fragment_chat extends Fragment implements TextWatcher {
     private TextView word;
     private TextView leftTime;
     private TextView score;
-    private String hidden_word;
+    private String hidden_word = "";
 
     public fragment_chat() {
         // Required empty public constructor
@@ -195,13 +195,16 @@ public class fragment_chat extends Fragment implements TextWatcher {
                 try {
                     JSONObject jsonObject = new JSONObject(text);
                     if (jsonObject.has("quiz")) {
-                        word.setText(jsonObject.getString("word"));
+                        Log.d("The value of 'quiz'", jsonObject.getString("quiz"));
+                        if (jsonObject.getString("quiz").equals("true")){
+                            word.setText(jsonObject.getString("word"));
+                            Log.d("The value of 'word'", String.valueOf(word));
+                        }
+                        else {
+                            hidden_word = jsonObject.getString("word");
+                            Log.d("The value of 'hidden_word'", hidden_word);
+                        }
                     }
-
-                    else if (jsonObject.has("hidden")) {
-                        hidden_word = jsonObject.getString("word");
-                    }
-
                     else {
                         jsonObject.put("isSent", false);
                         Log.d("isSent", "ok");
@@ -237,6 +240,11 @@ public class fragment_chat extends Fragment implements TextWatcher {
             try {
                 jsonObject.put("name", name);
                 jsonObject.put("message", messageEdit.getText().toString());
+
+                if (hidden_word.equals(messageEdit.getText().toString())){
+                    Log.d("Sent hidden word",hidden_word);
+                    jsonObject.put("rightans", "true");
+                }
 
                 webSocket.send(jsonObject.toString());
 
